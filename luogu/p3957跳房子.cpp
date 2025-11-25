@@ -1,78 +1,62 @@
 #include <iostream>
 #include <vector>
-#include <deque>
 #include <utility>
+#include <deque>
 using namespace std;
 
-#define ll long long
-#define inf 0x7f7f7f7f
-// #define debug
+#define inf 0x3f3f3f3f
 
-ll n, d, k;
-vector<ll> dis, score;
+int n, d, k;
+vector<int> dis;
+vector<int> score;
 
-bool check(ll mid)
-{
-    deque<pair<ll, ll>> que;
-    vector<ll> dp(n, -inf);
+bool solve(int g) {
+    // cout << g << endl;
+    int cur = 0;
+    deque<pair<int, int>> que;
 
-    ll cur = 0;
-    for (int i = 0; i < n; i++)
-    {
-        while (cur < i && dis[cur] <= min(dis[i] - d + mid, dis[i] - 1))
-        {
-            if (dp[cur] == -inf)
-            {
-                cur++;
-                continue;
-            }
+    vector<int> dp(n + 1, -inf);
+    dp[0] = 0;
 
-            while (!que.empty() && que.back().first <= dp[cur])
+    for (int i = 1; i <= n; i++) {
+        while (cur < i && (dis[i] - dis[cur]) >= d - g) {
+            while (!que.empty() && dp[cur] >= que.back().second)
                 que.pop_back();
-            que.push_back({dp[cur], cur});
-            cur++;
+            que.push_back({dis[cur], dp[cur++]});
         }
-        while (!que.empty() && dis[que.front().second] < dis[i] - d - mid)
+        while (!que.empty() && (dis[i] - que.front().first) > d + g)
             que.pop_front();
-
-        if (d - mid <= dis[i] && dis[i] <= d + mid)
-            dp[i] = score[i];
-        if (!que.empty())
-            dp[i] = max(dp[i], que.front().first + score[i]);
-
-#ifdef debug
-        cout << i << " " << dp[i] << endl;
-#endif
-        if (dp[i] >= k)
+        if (que.empty() || que.front().second == -inf)
+            dp[i] = -inf;
+        else
+            dp[i] = que.front().second + score[i];
+        if (dp[i] >= k) {
+            // for (int i = 0; i <= n; i++)
+            //     cout << dp[i] << " ";
+            // cout << endl;
             return true;
+        }
     }
-
+    // for (int i = 0; i <= n; i++)
+    //     cout << dp[i] << " ";
+    // cout << endl;
     return false;
 }
 
-int main()
-{
+int main() {
     cin >> n >> d >> k;
 
-    dis.resize(n);
-    score.resize(n);
+    dis.resize(n + 1, 0);
+    score.resize(n + 1, 0);
 
-    for (ll i = 0; i < n; i++)
+    for (int i = 1; i <= n; i++)
         cin >> dis[i] >> score[i];
 
-    // cout << "over" << endl;
+    int l = 0, r = dis[n - 1], ans = -1;
 
-    ll ans = -1;
-    ll l = 0, r = dis[n - 1];
-
-    while (l <= r)
-    {
-        ll mid = l + ((r - l) >> 1);
-#ifdef debug
-        cout << l << " " << r << " " << mid << endl;
-#endif
-        if (check(mid))
-        {
+    while (l <= r) {
+        int mid = l + ((r - l) >> 1);
+        if (solve(mid)) {
             ans = mid;
             r = mid - 1;
         }
@@ -84,3 +68,4 @@ int main()
 
     return 0;
 }
+

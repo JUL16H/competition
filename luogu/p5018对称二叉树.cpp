@@ -36,15 +36,15 @@ int main()
     cin >> n;
 
     vec.resize(n + 1);
-    
+
     for (int i = 1; i <= n; i++)
         cin >> vec[i].v;
-    
+
     for (int i = 1; i <= n; i++)
         cin >> vec[i].l >> vec[i].r;
 
     int rst = 0;
-    for (int i = 1; i <= n; i++)    
+    for (int i = 1; i <= n; i++)
     {
         if (same(i, i))
         {
