@@ -1,52 +1,42 @@
 #include <iostream>
 using namespace std;
 
-class Node
+struct Node
 {
-public:
+    Node *prev = nullptr;
     int id;
-    Node *next;
+    Node *nxt = nullptr;
 
-    Node (int _id) : id(_id) {}
+    Node(int _id) : id(_id) {}
 };
-
-Node *create(Node *base, int id)
-{
-    Node *newNode = new Node(id);
-    if (base != nullptr)
-    {
-        base->next = newNode;
-    }
-    newNode->next = nullptr;
-    
-    return newNode;
-}
 
 int main()
 {
     int n, m;
     cin >> n >> m;
 
-    int idx = 1;
-    Node *first = create(nullptr, idx++);
-    Node *now = first;
-    for (int i = 0; i < n - 1; i++)
-    {
-        now = create(now, idx++);
-    }
-    now->next = first;
+    Node *head = new Node(1);
+    Node *cur = head;
 
-    idx = 1;
-    while (now->next != now)
+    for (int i = 1; i < n; i++)
     {
-        for (int i = 1; i < m; i++)
-        {
-            now = now->next;
-        }
-        cout << now->next->id << " ";
-        now->next = now->next->next;
+        cur->nxt = new Node(cur->id + 1);
+        cur->nxt->prev = cur;
+        cur = cur->nxt;
     }
-    cout << now->next->id;
+
+    cur->nxt = head;
+    head->prev = cur;
+    cur = head;
+
+    for (int i = 0; i < n; i++)
+    {
+        for (int j = 1; j < m; j++) cur = cur->nxt;
+        cout << cur->id << " ";
+        cur->nxt->prev = cur->prev;
+        cur->prev->nxt = cur->nxt;
+        cur = cur->nxt;
+    }
 
     return 0;
 }

@@ -1,57 +1,82 @@
 #include <iostream>
-#include <list>
-#include <algorithm>
+#include <unordered_map>
 using namespace std;
 
-void show(list<int> *lst)
+struct Node
 {
-    // cout << "lst";
-    for (auto it = lst->begin(); it != lst->end(); it++)
-    {
-        cout << *it << " ";
-    }
-    cout << endl;
-}
+    Node *prev = nullptr;
+    int id;
+    Node *nxt = nullptr;
 
-// 用空间换时间 将索引存起来规避链表随机读取速度慢问题
-list<int>::iterator its[100000];
-bool have[100000] = { false };
+    Node(int _id) : id(_id) {}
+};
+
 int main()
 {
-    ios::sync_with_stdio(0);
     int N;
     cin >> N;
 
-    list<int> lst;
-    lst.push_back(1); 
-    its[1] = lst.begin();
-    have[1] = true;
-    
+    unordered_map<int, Node*> mp;
+
+    for (int i = 1; i <= N; i++)
+        mp[i] = new Node(i);
+
+    int k, p;
     for (int i = 2; i <= N; i++)
     {
-        int k ,p;
         cin >> k >> p;
-        auto it = its[k];
-        if (p) it++;
-        its[i] = lst.insert(it, i);
-        have[i] = true;
-        // show(&lst);
-    }
-
-    cin >> N;
-    for (int i = 0; i < N; i++)
-    {
-        int x;
-        cin >> x; 
-        if (have[x])
+        if (p)
         {
-            lst.erase(its[x]);
-            have[x] = false;
-            // show(&lst);
+            mp[i]->prev = mp[k];
+            mp[i]->nxt = mp[k]->nxt;
+            if (mp[k]->nxt)
+                mp[k]->nxt->prev = mp[i];
+            mp[k]->nxt = mp[i];
+        }
+        else
+        {
+            mp[i]->nxt = mp[k];
+            mp[i]->prev = mp[k]->prev;
+            if (mp[k]->prev)
+                mp[k]->prev->nxt = mp[i];
+            mp[k]->prev = mp[i];
         }
     }
 
-    show(&lst);
+    int M;
+    cin >> M;
+
+    int x;
+    for (int i = 0; i < M; i++)
+    {
+        cin >> x;
+        if (mp[x])
+        {
+            if (mp[x]->nxt)
+                mp[x]->nxt->prev = mp[x]->prev;
+            if (mp[x]->prev)
+                mp[x]->prev->nxt = mp[x]->nxt;
+            mp[x] = nullptr;
+        }
+    }
+
+    for (int i = 1; i <= N; i++)
+    {
+        if (mp[i]  && !mp[i]->prev)
+        {
+            x = i;
+            break;
+        }
+    }
+
+    while (1)
+    {
+        cout << x << " ";
+        if (mp[x]->nxt)
+            x = mp[x]->nxt->id;
+        else
+            break;
+    }
 
     return 0;
 }

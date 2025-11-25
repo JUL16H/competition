@@ -2,39 +2,25 @@
 #include <vector>
 using namespace std;
 
-int n;
-vector<vector<bool>> vec1;
-vector<vector<bool>> vec2;
-
-bool func1()
-{
-    for (int i = 0; i < )
-}
-
 int main()
 {
+    int n;
     cin >> n;
-    
-    vec1.resize(n, vector<bool>(n));
-    vec2.resize(n, vector<bool>(n));
 
-    char c;
+    vector<vector<char>> before(n, vector<char>(n));
+    vector<vector<char>> buff(n, vector<char>(n));
+    vector<vector<char>> target(n, vector<char>(n));
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> before[i][j];
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            cin >> target[i][j];
+
+
     for (int i = 0; i < n; i++)
     {
         for (int j = 0; j < n; j++)
-        {
-            cin >> c;
-            vec1[i][j] = (c == '@');
-        }
     }
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
-            cin >> c;
-            vec2[i][j] = (c == '@');
-        }
-    }
-
-    
 }
